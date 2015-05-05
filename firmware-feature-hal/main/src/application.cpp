@@ -8,22 +8,46 @@
  * @brief   Split Flap Display Interface
  ******************************************************************************
  ******************************************************************************
+
+aaaaaaaa1 aaaaaaaa2 aaaaaaaa3 aaaaaaaa4 aaaaaaaa5 aaaaaaaa6 aaaaaaaa7 aaaaaaaa8 aaaaaaaa9 
+
  */
 
 /* Includes ------------------------------------------------------------------*/  
 #include "application.h"
 
-bool DEBUG=true;
+#include "flashee-eeprom.h"
+using namespace Flashee;
+
+bool DEBUG=false;
 bool isDisplayEmpty=false;
+
+int messageSize=0;
+float messageBlocks=0;
 
 String message="Hello everybody, im a sf display!";
 int updateDisplay(String command);
 int updateMessageVariable(String command);
 
+FlashDevice* flash;
 
 
+int ledPin=7;
 
 SYSTEM_MODE(AUTOMATIC);
+
+
+char charPosition[90]={0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,
+                        0x0b,0x0c,0x0d,0x0e,0x0f,0x10,0x11,0x12,0x13,0x14,
+                        0x15,0x16,0x17,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,
+                        0x1f,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,
+                        0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f,0x30,0x31,0x32,
+                        0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x3a,0x3b,0x3c,
+                        0x3d,0x3e,0x3f,0x40,0x41,0x42,0x43,0x44,0x45,0x46,
+                        0x47,0x48,0x49,0x4a,0x4b,0x4c,0x4d,0x4e,0x4f,0x50,
+                        0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5a
+                        };
+
 
 /* This function is called once at start up ----------------------------------*/
 void setup()
@@ -32,15 +56,21 @@ void setup()
 	Spark.function("updateDis", updateDisplay);
 	Spark.function("updateMsgVar", updateMessageVariable);
 
+  pinMode(ledPin, OUTPUT);
 
-if(DEBUG)Serial.begin(9600); // this serial is for debig over usb
+  flash = Devices::createWearLevelErase();
+  flash->eraseAll();
+
+
+ if(DEBUG)Serial.begin(9600); // this serial is for debug over usb
  Serial1.begin(4800,SERIAL_8E2);
   
-
-	//displayText("hello everybody"); 
-
-  updateDisplay("1");
-	delay(10000);
+//String tempStr="0aaaaaaaa1 aaaaaaaa2 aaaaaaaa3 aaaaaaaa4 aaaaaaaa5 aaaaaaaa6 aaaaaaaa7 aaaaaaaa8 aaaaaaaa9 aaaaaaaa1 aaaaaaaa2 aaaaaaaa3 aaaaaaaa4 aaaaaaaa5 aaaaaaaa6 aaaaaaaa7 aaaaaaaa8 aaaaaaaa9 something! something!";
+	//updateMessageVariable(tempStr); 
+  //tempStr="[messageEnd]";
+//updateMessageVariable(tempStr);
+// updateDisplay("1");
+	//delay(10000);
 	updateDisplay("0");
 
 
@@ -56,183 +86,34 @@ void writeChar(int pos, char symbol) {
 
 
   Serial1.write(0x88);    //start signal
+ // delay(2);
+  Serial1.write(charPosition[pos]);
+  //delay(2);
+  //if(DEBUG)Serial.print(posChar);
+  //if(DEBUG)Serial.print(" - ");
 
-  //position
-  if (pos==0)Serial1.write(0x01);
-  if (pos==1)Serial1.write(0x02);
-  if (pos==2)Serial1.write(0x03);
-  if (pos==3)Serial1.write(0x04);
-  if (pos==4)Serial1.write(0x05);
-  if (pos==5)Serial1.write(0x06);
-  if (pos==6)Serial1.write(0x07);
-  if (pos==7)Serial1.write(0x08);
-  if (pos==8)Serial1.write(0x09);
-  if (pos==9)Serial1.write(0x0a);
-  if (pos==10)Serial1.write(0x0b);
-  if (pos==11)Serial1.write(0x0c);
-  if (pos==12)Serial1.write(0x0d);
-  if (pos==13)Serial1.write(0x0e);
-  if (pos==14)Serial1.write(0x0f);
-  if (pos==15)Serial1.write(0x10);
-  if (pos==16)Serial1.write(0x11);
-  if (pos==17)Serial1.write(0x12);
-  if (pos==18)Serial1.write(0x13);
-  if (pos==19)Serial1.write(0x14);
-  if (pos==20)Serial1.write(0x15);
-  if (pos==21)Serial1.write(0x16);
-  if (pos==22)Serial1.write(0x17);
-  if (pos==23)Serial1.write(0x18);
-  if (pos==24)Serial1.write(0x19);
-  if (pos==25)Serial1.write(0x1a);
-  if (pos==26)Serial1.write(0x1b);
-  if (pos==27)Serial1.write(0x1c);
-  if (pos==28)Serial1.write(0x1d);
-  if (pos==29)Serial1.write(0x1e);
-  if (pos==30)Serial1.write(0x1f);
-  if (pos==31)Serial1.write(0x20);
-  if (pos==32)Serial1.write(0x21);
-  if (pos==33)Serial1.write(0x22);
-  if (pos==34)Serial1.write(0x23);
-  if (pos==35)Serial1.write(0x24);
-  if (pos==36)Serial1.write(0x25);
-  if (pos==37)Serial1.write(0x26);
-  if (pos==38)Serial1.write(0x27);
-  if (pos==39)Serial1.write(0x28);
-  if (pos==40)Serial1.write(0x29);
-  if (pos==41)Serial1.write(0x2a);
-  if (pos==42)Serial1.write(0x2b);
-  if (pos==43)Serial1.write(0x2c);
-  if (pos==44)Serial1.write(0x2d);
-  if (pos==45)Serial1.write(0x2e);
-  if (pos==46)Serial1.write(0x2f);
-  if (pos==47)Serial1.write(0x30);
-  if (pos==48)Serial1.write(0x31);
-  if (pos==49)Serial1.write(0x32);
-  if (pos==50)Serial1.write(0x33);
-  if (pos==51)Serial1.write(0x34);
-  if (pos==52)Serial1.write(0x35);
-  if (pos==53)Serial1.write(0x36);
-  if (pos==54)Serial1.write(0x37);
-  if (pos==55)Serial1.write(0x38);
-  if (pos==56)Serial1.write(0x39);
-  if (pos==57)Serial1.write(0x3a);
-  if (pos==58)Serial1.write(0x3b);
-  if (pos==59)Serial1.write(0x3c);
-  if (pos==60)Serial1.write(0x3d);
-  if (pos==61)Serial1.write(0x3e);
-  if (pos==62)Serial1.write(0x3f);
-  if (pos==63)Serial1.write(0x40);
-  if (pos==64)Serial1.write(0x41);
-  if (pos==65)Serial1.write(0x42);
-  if (pos==66)Serial1.write(0x43);
-  if (pos==67)Serial1.write(0x44);
-  if (pos==68)Serial1.write(0x45);
-  if (pos==69)Serial1.write(0x46);
-  if (pos==70)Serial1.write(0x47);
-  if (pos==71)Serial1.write(0x48);
-  if (pos==72)Serial1.write(0x49);
-  if (pos==73)Serial1.write(0x4a);
-  if (pos==74)Serial1.write(0x4b);
-  if (pos==75)Serial1.write(0x4c);
-  if (pos==76)Serial1.write(0x4d);
-  if (pos==77)Serial1.write(0x4e);
-  if (pos==78)Serial1.write(0x4f);
-  if (pos==79)Serial1.write(0x50);
-  if (pos==80)Serial1.write(0x51);
-  if (pos==81)Serial1.write(0x52);
-  if (pos==82)Serial1.write(0x53);
-  if (pos==83)Serial1.write(0x54);
-  if (pos==84)Serial1.write(0x55);
-  if (pos==85)Serial1.write(0x56);
-  if (pos==86)Serial1.write(0x57);
-  if (pos==87)Serial1.write(0x58);
-  if (pos==88)Serial1.write(0x59);
-  if (pos==89)Serial1.write(0x5a);
-
-bool noSymbol=false;
-
-  if (symbol ==' ')Serial1.write(0x20);
-  else if (symbol =='0')Serial1.write(0x30);
-  else if (symbol =='1')Serial1.write(0x31);
-  else if (symbol =='2')Serial1.write(0x32);
-  else if (symbol =='3')Serial1.write(0x33);
-  else if (symbol =='4')Serial1.write(0x34);
-  else if (symbol =='5')Serial1.write(0x35);
-  else if (symbol =='6')Serial1.write(0x36);
-  else if (symbol =='7')Serial1.write(0x37);
-  else if (symbol =='8')Serial1.write(0x38);
-  else if (symbol =='9')Serial1.write(0x39);
-  
-
-  else if (symbol =='a' || symbol =='A')Serial1.write(0x41);
-  else if (symbol =='b' || symbol =='B')Serial1.write(0x42);
-  else if (symbol =='c' || symbol =='C')Serial1.write(0x43);
-  else if (symbol =='d' || symbol =='D')Serial1.write(0x44);
-  else if (symbol =='e' || symbol =='E')Serial1.write(0x45);
-  else if (symbol =='f' || symbol =='F')Serial1.write(0x46);
-  else if (symbol =='g' || symbol =='G')Serial1.write(0x47);
-  else if (symbol =='h' || symbol =='H')Serial1.write(0x48);
-  else if (symbol =='i' || symbol =='I')Serial1.write(0x49);
-  else if (symbol =='j' || symbol =='J')Serial1.write(0x4a);
-  else if (symbol =='k' || symbol =='K')Serial1.write(0x4b);
-  else if (symbol =='l' || symbol =='L')Serial1.write(0x4c);
-  else if (symbol =='m' || symbol =='M')Serial1.write(0x4d);
-  else if (symbol =='n' || symbol =='N')Serial1.write(0x4e);
-  else if (symbol =='o' || symbol =='O')Serial1.write(0x4f);
-  else if (symbol =='p' || symbol =='P')Serial1.write(0x50);
-  else if (symbol =='q' || symbol =='Q')Serial1.write(0x51);
-  else if (symbol =='r' || symbol =='R')Serial1.write(0x52);
-  else if (symbol =='s' || symbol =='S')Serial1.write(0x53);
-  else if (symbol =='t' || symbol =='T')Serial1.write(0x54);
-  else if (symbol =='u' || symbol =='U')Serial1.write(0x55);
-  else if (symbol =='v' || symbol =='V')Serial1.write(0x56);
-  else if (symbol =='w' || symbol =='W')Serial1.write(0x57);
-  else if (symbol =='x' || symbol =='X')Serial1.write(0x58);
-  else if (symbol =='y' || symbol =='Y')Serial1.write(0x59);
-  else if (symbol =='z' || symbol =='Z')Serial1.write(0x5a);
-  
-
-   else if (int(symbol) == 164)Serial1.write(0x3f);// ä
-   else if (int(symbol) == 182)Serial1.write(0x3b);// ö
-   else if (int(symbol) == 188)Serial1.write(0x3c);// ü
-   else if (int(symbol) == 45)Serial1.write(0x2d);// -
-   else if (int(symbol) == 46)Serial1.write(0x2e);// .
-   else if (int(symbol) == 40)Serial1.write(0x28);// (
-   else if (int(symbol) == 41)Serial1.write(0x29);// )
-   else if (int(symbol) == 33)Serial1.write(0x21);// !
-   else if (int(symbol) == 58)Serial1.write(0x3a);// :
-   else if (int(symbol) == 47)Serial1.write(0x2f);// /
-   else if (int(symbol) == 34)Serial1.write(0x22);// "
-   else if (int(symbol) == 44)Serial1.write(0x2c);// , 
-   
-   else if (int(symbol) == 61)Serial1.write(0x3d); // =
-   else if (int(symbol) == 172)Serial1.write(0x3e);// €
-   else if (int(symbol) == 64)Serial1.write(0x40);//ß @
-   else{
-
-      noSymbol=true;
-
-   }
-   
-
-  if(!noSymbol){
-   Serial.println(int(symbol));
-  
+  Serial1.write(symbol);
+  //delay(2);
+  //if(DEBUG)Serial.println(symbol);
   Serial1.write(0x81);     //end signal
-  
-}
+  //delay(2);
+ delay(20);
+
 }
 
 /* writeText FUNCTION -----------------------------------------------*/
 void writeText(String word){
 
-	//int position=(90/2)-(word.length()/2);
-updateDisplay("0");
+	//int position=0;
+  //if(word.length()<30)position=(90/2)-(word.length()/2);
+  updateDisplay("0");
 	 for (int i = 0; i<int(word.length());i++){
 
 	 	writeChar(0+i, word.charAt(i));
 	 	
   }
+
+   if(DEBUG)Serial.println();
 	
 }
 
@@ -257,14 +138,114 @@ updateDisplay("0");
 /* DISPLAY TEXT FUNCTION --------------------------------------------*/
 int updateMessageVariable(String command){
 
- if(command){
+//Serial.print("command size");
+//Serial.println(command.length());
 
-  message+=command;
 
-   //delay(10000);
+ if(command && command!="[messageEnd]"){
 
+
+  digitalWrite(ledPin, HIGH);
+
+  String temp="";
+  int messageStart=0;
+  for(int i=0; i < 5; i++){
+
+    if(command.charAt(i)!='_'){
+      temp+=command.charAt(i);
+    }
+    else{
+
+      messageStart=i+1;
+      break;
+    }
+
+
+  }
+  int stringLocation=temp.toInt();
+  //int stringLocation=command.substring(0, 1).toInt();
+  String finalString=command.substring(messageStart, command.length());
+
+
+
+
+  if(DEBUG){
+  Serial.print("stringLocation: ");
+  Serial.print(stringLocation*60);
+  Serial.print(" | finalStringSize: ");
+  Serial.print(finalString.length());
+  Serial.print(" | finalString: ");
+  Serial.print(finalString);
+  Serial.println();
+  }
+  //message+=command;
+
+  
+  char charBuf[finalString.length()+1];
+  finalString.toCharArray(charBuf, finalString.length()+1);
+
+  flash->writeString(charBuf, (stringLocation)*60,false);
+
+  messageSize+=finalString.length();
+
+
+
+  digitalWrite(ledPin, LOW);
   return 1;
+
+ }else if(command=="[messageEnd]"){
+
+  digitalWrite(ledPin, HIGH);
+  char buf[messageSize];
+  memset(buf, 5, sizeof(buf));
+
+  flash->read(buf, 0, messageSize);
+
+  int bufSize=sizeof(buf);
+
+   messageBlocks=round(((float(messageSize)-1.0f)/90.0f)+0.5);
+   if(DEBUG)Serial.print("block size - ");
+   if(DEBUG)Serial.println(messageBlocks);
+  if(DEBUG)Serial.println(buf);
+
+  for(int i = 0; i < messageBlocks; i++){ 
+  
+    String temp="";
+
+  if(DEBUG)Serial.print("mSize: ");
+  if(DEBUG)Serial.print(bufSize);
+  if(DEBUG)Serial.print(" | block: ");
+  if(DEBUG)Serial.print(i);
+  if(DEBUG)Serial.print(" | bgn: ");
+  if(DEBUG)Serial.print(i*90);
+  if(DEBUG)Serial.print(" | end :");
+  if(DEBUG)Serial.println((messageBlocks*90)-(((messageBlocks-(i+1))*90)));
+
+
+  for(int p = i*90; p < (messageBlocks*90)-(((messageBlocks-(i+1))*90)); p++){
+
+      if(p<bufSize)temp+=buf[p];
+
+    if(DEBUG)Serial.print(p);
+    if(DEBUG)Serial.print(" -" );
+    if(DEBUG)Serial.println(buf[p]);
+
+  }
+
+
+      //Serial.println(temp);
+      writeText(temp);
+      if(messageBlocks>0)delay(8000);
+  }
+
+  messageSize=0;
+  messageBlocks=0;
+  flash->eraseAll();
+  digitalWrite(ledPin, LOW);
+  return 2;
+ 
  }
+ 
  else return 0;
 
 }
@@ -282,7 +263,9 @@ int updateDisplay(String command){
   if(command=="0"){           //_________________________________________ RESET
     Serial1.write(0x82);
     isDisplayEmpty=true;
-    message="";
+    // messageSize=0;
+    // messageBlocks=0;
+    // flash->eraseAll();
     return 1;
 
 }else if(command=="1"){       //_________________________________________ update message

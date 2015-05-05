@@ -143,19 +143,24 @@
         $("#button-2").on("click", function () {
 			
 			var text = document.getElementById('message').value
-			var parts = text.match(/[\s\S]{1,63}/g) || [];
+			var parts = text.match(/[\s\S]{1,60}/g) || [];
+			//doMethod("updateMsgVar", "["+);
 			
 			for(i = 0; i < parts.length; i++){
 				
+				var textPosition = i + "_" + parts[i];
+				//var stringWithPosition = textPosition.concat(parts[i]);
 				
-				doMethod("updateMsgVar", parts[i]);  //update the message variable
+				console.log(textPosition);
+				
+				doMethod("updateMsgVar", textPosition);  //update the message variable
 				//setTimeout(function(){alert('Hello')},3000)
 				
-				giveSomeDelay(500);
+				giveSomeDelay(100);
 				}
 			
-			
-			doMethod(funcKey1, "1"); // update the display with the new text
+			giveSomeDelay(500);
+			doMethod("updateMsgVar", "[messageEnd]"); // update the display with the new text
           //doMethod(funcKey2, args2);
 		  
         });
@@ -165,7 +170,7 @@
     
     <script language="javascript">
 
-// www.sean.co.uk
+
 
 function giveSomeDelay(millis) 
 {
@@ -189,7 +194,7 @@ while(curDate-date < millis);
           <div class="panel-body">
           <br/><br/>
             <button type="button" class="btn btn-primary btn-lg" id="button-1">BUTTON 1</button><br/><br/><br/><br/>
-            <input type="text" id="message" name="string" maxlength="90" size="90"></input><br/><br/>
+            <input type="text" id="message" name="string" maxlength="10000" size="90"></input><br/><br/>
             <button type="button" class="btn btn-primary btn-lg" id="button-2">BUTTON 2</button><br/><br/>
            
             
