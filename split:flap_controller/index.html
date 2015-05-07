@@ -43,7 +43,7 @@
 		// Function 3
         var funcKey3 = "";
         var args3 = "";
-        var label3 = ""; // button label 3
+        var label3 = "SEND TEXT"; // button label 3
         // Function 4
         var funcKey4 = "test";
         var args4 = "";
@@ -156,13 +156,61 @@
 				doMethod("updateMsgVar", textPosition);  //update the message variable
 				//setTimeout(function(){alert('Hello')},3000)
 				
-				giveSomeDelay(100);
+				giveSomeDelay(500);
 				}
 			
-			giveSomeDelay(500);
+		//	giveSomeDelay(500);
 			doMethod("updateMsgVar", "[messageEnd]"); // update the display with the new text
           //doMethod(funcKey2, args2);
 		  
+        });
+
+         $("#button-3").on("click", function () {
+
+          var text1=document.getElementById('nomoBox1').value;
+          var text2=document.getElementById('nomoBox2').value;
+          var text3=document.getElementById('nomoBox3').value;
+//console.log(text1.lenght);
+          for(i = text1.length; i < 30; i++){
+
+            text1+=" ";
+            
+          }
+
+           for(i = text2.length; i < 30; i++){
+
+            text2+=" ";
+          }
+
+           for(i = text3.length; i < 30; i++){
+
+            text3+=" ";
+          }
+
+
+
+      var finalText=text1+text2+text3;
+      var parts = finalText.match(/[\s\S]{1,60}/g) || [];
+      //doMethod("updateMsgVar", "["+);
+      
+      for(i = 0; i < parts.length; i++){
+        
+        var textPosition = i + "_" + parts[i];
+        //var stringWithPosition = textPosition.concat(parts[i]);
+        
+        console.log(textPosition);
+        
+        doMethod("updateMsgVar", textPosition);  //update the message variable
+        //setTimeout(function(){alert('Hello')},3000)
+        
+        giveSomeDelay(500);
+        }
+      
+    //  giveSomeDelay(500);
+      doMethod("updateMsgVar", "[messageEnd]"); // update the display with the new text
+
+
+
         });
 
       });
@@ -196,8 +244,11 @@ while(curDate-date < millis);
             <button type="button" class="btn btn-primary btn-lg" id="button-1">BUTTON 1</button><br/><br/><br/><br/>
             <input type="text" id="message" name="string" maxlength="10000" size="90"></input><br/><br/>
             <button type="button" class="btn btn-primary btn-lg" id="button-2">BUTTON 2</button><br/><br/>
-           
-            
+           <br/><br/>
+            <input type="text" maxlength="30" id="nomoBox1"/><p/><p/>
+            <input type="text" maxlength="30" id="nomoBox2"/><p/><p/>
+            <input type="text" maxlength="30" id="nomoBox3"/><p/><p/>
+            <button type="button" class="btn btn-primary btn-lg" id="button-3">BUTTON 3</button><br/><br/>
             
           </div>
         </div>
@@ -205,5 +256,9 @@ while(curDate-date < millis);
       <div class="alert fade in" id="info-alert" hidden data-spy="affix"></div>
     </div>
            
+
+
+
+
   </body>
 </html>

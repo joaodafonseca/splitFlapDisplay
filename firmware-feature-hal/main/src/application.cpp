@@ -15,6 +15,7 @@ aaaaaaaa1 aaaaaaaa2 aaaaaaaa3 aaaaaaaa4 aaaaaaaa5 aaaaaaaa6 aaaaaaaa7 aaaaaaaa8 
 
 /* Includes ------------------------------------------------------------------*/  
 #include "application.h"
+//#include "SparkTime.h"
 
 #include "flashee-eeprom.h"
 using namespace Flashee;
@@ -24,6 +25,7 @@ bool isDisplayEmpty=false;
 
 int messageSize=0;
 float messageBlocks=0;
+bool isDisplayingMessage;
 
 String message="Hello everybody, im a sf display!";
 int updateDisplay(String command);
@@ -33,6 +35,10 @@ FlashDevice* flash;
 
 
 int ledPin=7;
+int relayPin=6;
+int counter=0;
+bool isDisplayOn;
+bool displayMeetingMessage;
 
 SYSTEM_MODE(AUTOMATIC);
 
@@ -57,11 +63,13 @@ void setup()
 	Spark.function("updateMsgVar", updateMessageVariable);
 
   pinMode(ledPin, OUTPUT);
+  pinMode(relayPin, OUTPUT);
+ 
 
   flash = Devices::createWearLevelErase();
   flash->eraseAll();
 
-
+isDisplayingMessage=false;
  if(DEBUG)Serial.begin(9600); // this serial is for debug over usb
  Serial1.begin(4800,SERIAL_8E2);
   
@@ -71,16 +79,76 @@ void setup()
 //updateMessageVariable(tempStr);
 // updateDisplay("1");
 	//delay(10000);
+  Time.zone(+2);
 	updateDisplay("0");
+  displayMeetingMessage=false;
 
 
 }
+
+
+void turnOnDisplay(){
+  counter=0;
+isDisplayingMessage=true;
+  if(!isDisplayOn){
+    digitalWrite(relayPin, HIGH);
+    delay(5000);
+   // counter=0;
+    isDisplayOn=true;
+
+}
+}
+
+
+void turnOffDisplay(){
+
+  if(isDisplayOn && !isDisplayingMessage){
+ delay(5000);
+ digitalWrite(relayPin, LOW);
+ isDisplayOn=false;
+}
+}
+
 
 /* This function loops forever --------------------------------------------*/
 void loop()
 {
+counter++;
+//Serial.println(counter);
+//Serial.print(Time.hour());
+//Serial.print(":");
+//Serial.println(Time.minute());
+
+if(Time.hour()==10 && Time.minute()==30 && !displayMeetingMessage){
+
+displayMeetingMessage=true;
+
+updateMessageVariable("0_meeting time, everybody!");
+updateMessageVariable("[messageEnd]");
 
 }
+else if(!(Time.hour()==10 && Time.minute()==30)) {
+
+  if(displayMeetingMessage){
+      displayMeetingMessage=false;
+      updateDisplay("0");
+      
+  }
+
+
+
+
+}
+
+if(counter>100000){
+turnOffDisplay();
+
+}
+
+}
+
+
+
 
 void writeChar(int pos, char symbol) {
 
@@ -92,12 +160,32 @@ void writeChar(int pos, char symbol) {
   //if(DEBUG)Serial.print(posChar);
   //if(DEBUG)Serial.print(" - ");
 
+
+  /*
+
+  if (symbol =='ä')myPort.write(0x3f);
+  if (symbol =='ö')myPort.write(0x3b);
+  if (symbol =='ü')myPort.write(0x3c);
+  if (symbol =='-')myPort.write(0x2d);
+  if (symbol =='.')myPort.write(0x2e);
+  if (symbol =='(')myPort.write(0x28);
+  if (symbol ==')')myPort.write(0x28);
+  if (symbol =='!')myPort.write(0x21);
+  if (symbol ==':')myPort.write(0x3a);
+  if (symbol =='/')myPort.write(0x2f);
+  if (symbol =='"')myPort.write(0x22);
+  if (symbol =='\'')myPort.write(0x2c);
+  if (symbol =='=')myPort.write(0x3d);
+  if (symbol =='€')myPort.write(0x3e);
+  if (symbol =='@')myPort.write(0x40);
+  */
+  
   Serial1.write(symbol);
   //delay(2);
   //if(DEBUG)Serial.println(symbol);
   Serial1.write(0x81);     //end signal
   //delay(2);
- delay(20);
+  delay(20);
 
 }
 
@@ -141,11 +229,12 @@ int updateMessageVariable(String command){
 //Serial.print("command size");
 //Serial.println(command.length());
 
-
+isDisplayingMessage=true;
  if(command && command!="[messageEnd]"){
 
 
   digitalWrite(ledPin, HIGH);
+
 
   String temp="";
   int messageStart=0;
@@ -194,7 +283,8 @@ int updateMessageVariable(String command){
   return 1;
 
  }else if(command=="[messageEnd]"){
-
+  
+  turnOnDisplay();
   digitalWrite(ledPin, HIGH);
   char buf[messageSize];
   memset(buf, 5, sizeof(buf));
@@ -203,9 +293,9 @@ int updateMessageVariable(String command){
 
   int bufSize=sizeof(buf);
 
-   messageBlocks=round(((float(messageSize)-1.0f)/90.0f)+0.5);
-   if(DEBUG)Serial.print("block size - ");
-   if(DEBUG)Serial.println(messageBlocks);
+  messageBlocks=round(((float(messageSize)-1.0f)/90.0f)+0.5);
+  if(DEBUG)Serial.print("block size - ");
+  if(DEBUG)Serial.println(messageBlocks);
   if(DEBUG)Serial.println(buf);
 
   for(int i = 0; i < messageBlocks; i++){ 
@@ -234,14 +324,17 @@ int updateMessageVariable(String command){
 
 
       //Serial.println(temp);
+      counter=0;
       writeText(temp);
       if(messageBlocks>0)delay(8000);
   }
+  isDisplayingMessage=false;
 
   messageSize=0;
   messageBlocks=0;
   flash->eraseAll();
   digitalWrite(ledPin, LOW);
+  //turnOffDisplay();
   return 2;
  
  }
@@ -255,17 +348,23 @@ int updateMessageVariable(String command){
 /* RESET FUNCTION ---------------------------------------------------*/
 int updateDisplay(String command){
 
+  turnOnDisplay();
+
   //if(DEBUG){
 
     //return -2;
   //}else{
 
   if(command=="0"){           //_________________________________________ RESET
+    counter=0;
     Serial1.write(0x82);
     isDisplayEmpty=true;
     // messageSize=0;
     // messageBlocks=0;
     // flash->eraseAll();
+    //turnOffDisplay();
+    //delay(4000);
+    isDisplayingMessage=false;
     return 1;
 
 }else if(command=="1"){       //_________________________________________ update message
@@ -282,7 +381,12 @@ int updateDisplay(String command){
 
     return 2;
 
-  }else return 0;
+  }else {
+
+    //turnOffDisplay();
+    return 0;
+
+  }
 //}
 
 }

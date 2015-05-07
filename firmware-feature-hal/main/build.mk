@@ -62,9 +62,13 @@ endif
 
 INCLUDE_DIRS += $(MODULE_PATH)/libraries
 
+
+
  INCLUDE_DIRS += ../spark-flashee-eeprom/firmware
  CPPSRC += ../spark-flashee-eeprom/firmware/flashee-eeprom.cpp
  CPPSRC += ../spark-flashee-eeprom/firmware/ff.cpp
+ 
+ 
 
 CFLAGS += -DSPARK_PLATFORM_NET=$(PLATFORM_NET)
 
