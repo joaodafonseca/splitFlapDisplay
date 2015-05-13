@@ -185,7 +185,7 @@ void writeChar(int pos, char symbol) {
   //if(DEBUG)Serial.println(symbol);
   Serial1.write(0x81);     //end signal
   //delay(2);
-  delay(20);
+  //delay(20);
 
 }
 
@@ -194,6 +194,9 @@ void writeText(String word){
 
 	//int position=0;
   //if(word.length()<30)position=(90/2)-(word.length()/2);
+word.toUpperCase();
+
+	
   updateDisplay("0");
 	 for (int i = 0; i<int(word.length());i++){
 
