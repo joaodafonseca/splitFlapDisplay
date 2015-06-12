@@ -64,6 +64,11 @@ INCLUDE_DIRS += $(MODULE_PATH)/libraries
 
 
 
+ 
+ 
+
+
+
  INCLUDE_DIRS += ../spark-flashee-eeprom/firmware
  CPPSRC += ../spark-flashee-eeprom/firmware/flashee-eeprom.cpp
  CPPSRC += ../spark-flashee-eeprom/firmware/ff.cpp

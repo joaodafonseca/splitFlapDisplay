@@ -32,11 +32,11 @@
         // App Heading
         var appHeading = "onformative - split/flap display";
         // Function 1
-        var funcKey1 = "updateDis";
+        var funcKey1 = "resetDis";
         var args1 = "0";
         var label1 = "RESET DISPLAY"; // button label 1
         // Function 2
-        var funcKey2 = "updateDis";
+        var funcKey2 = "resetDis";
         var args2 = "1";
         var label2 = "SEND TEXT"; // button label 2
         
@@ -142,8 +142,8 @@
         });
         $("#button-2").on("click", function () {
 			
-			var text = document.getElementById('message').value
-			var parts = text.match(/[\s\S]{1,60}/g) || [];
+			var text = document.getElementById('normalBox').value
+			var parts = text.match(/[\s\S]{1,20}/g) || [];
 			//doMethod("updateMsgVar", "["+);
 			
 			for(i = 0; i < parts.length; i++){
@@ -159,7 +159,7 @@
 				giveSomeDelay(500);
 				}
 			
-		//	giveSomeDelay(500);
+			giveSomeDelay(500);
 			doMethod("updateMsgVar", "[messageEnd]"); // update the display with the new text
           //doMethod(funcKey2, args2);
 		  
@@ -190,7 +190,7 @@
 
 
       var finalText=text1+text2+text3;
-      var parts = finalText.match(/[\s\S]{1,60}/g) || [];
+      var parts = finalText.match(/[\s\S]{1,20}/g) || [];
       //doMethod("updateMsgVar", "["+);
       
       for(i = 0; i < parts.length; i++){
@@ -206,7 +206,7 @@
         giveSomeDelay(500);
         }
       
-    //  giveSomeDelay(500);
+      giveSomeDelay(500);
       doMethod("updateMsgVar", "[messageEnd]"); // update the display with the new text
 
 
@@ -229,6 +229,54 @@ do { curDate = new Date(); }
 while(curDate-date < millis);
 } 
 
+
+
+$(function checkChar(){
+	
+  $('#normalBox').keypress(function(e){
+
+    if((e.which >= 97 && e.which <= 122) || (e.which >= 65 && e.which <= 90) || (e.which >= 48 && e.which <= 57) || (e.which == 45) || (e.which == 46) || (e.which == 90) || (e.which == 40) || (e.which == 41) || (e.which == 33) || (e.which == 58) || (e.which == 47) || (e.which == 34) || (e.which == 44) || (e.which == 61) || (e.which == 8364) || (e.which == 64) || (e.which == 228) || (e.which == 246) || (e.which == 252) || (e.which == 32)){
+    
+    return true;
+    } else {
+     return false;
+    }
+  });
+  
+
+ $('#nomoBox1').keypress(function(e){
+
+    if((e.which >= 97 && e.which <= 122) || (e.which >= 65 && e.which <= 90) || (e.which >= 48 && e.which <= 57) || (e.which == 45) || (e.which == 46) || (e.which == 90) || (e.which == 40) || (e.which == 41) || (e.which == 33) || (e.which == 58) || (e.which == 47) || (e.which == 34) || (e.which == 44) || (e.which == 61) || (e.which == 8364) || (e.which == 64) || (e.which == 228) || (e.which == 246) || (e.which == 252) || (e.which == 32)){
+    
+    return true;
+    } else {
+      return false;
+    }
+  });
+
+
+  $('#nomoBox2').keypress(function(e){
+
+    if((e.which >= 97 && e.which <= 122) || (e.which >= 65 && e.which <= 90) || (e.which >= 48 && e.which <= 57) || (e.which == 45) || (e.which == 46) || (e.which == 90) || (e.which == 40) || (e.which == 41) || (e.which == 33) || (e.which == 58) || (e.which == 47) || (e.which == 34) || (e.which == 44) || (e.which == 61) || (e.which == 8364) || (e.which == 64) || (e.which == 228) || (e.which == 246) || (e.which == 252) || (e.which == 32)){
+    
+    return true;
+    } else {
+      return false;
+    }
+  });
+
+   $('#nomoBox3').keypress(function(e){
+
+    if((e.which >= 97 && e.which <= 122) || (e.which >= 65 && e.which <= 90) || (e.which >= 48 && e.which <= 57) || (e.which == 45) || (e.which == 46) || (e.which == 90) || (e.which == 40) || (e.which == 41) || (e.which == 33) || (e.which == 58) || (e.which == 47) || (e.which == 34) || (e.which == 44) || (e.which == 61) || (e.which == 8364) || (e.which == 64) || (e.which == 228) || (e.which == 246) || (e.which == 252) || (e.which == 32)){
+    
+    return true;
+    } else {
+      return false;
+    }
+  });
+
+});
+
 </script>
 
     <div class="container">
@@ -242,7 +290,7 @@ while(curDate-date < millis);
           <div class="panel-body">
           <br/><br/>
             <button type="button" class="btn btn-primary btn-lg" id="button-1">BUTTON 1</button><br/><br/><br/><br/>
-            <input type="text" id="message" name="string" maxlength="10000" size="90"></input><br/><br/>
+            <input type="text" maxlength="10000" id="normalBox" size="90"/><br/><br/>
             <button type="button" class="btn btn-primary btn-lg" id="button-2">BUTTON 2</button><br/><br/>
            <br/><br/>
             <input type="text" maxlength="30" id="nomoBox1"/><p/><p/>
